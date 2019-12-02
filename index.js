@@ -81,9 +81,12 @@ async function run() {
        setTimeout(function() {
             get_sandbox_details(url, token, id, 
               function (status){
-                if (status.sandbox_status=='Ending'){
-                   core.setFailed(error.message);
+                if (status.sandbox_status=='Ended'){
+                   core.setFailed('Blueprint failed policy validation');
+                }
 
+                if (status.status_details!='' && status.status_details!='Waiting'){
+                   core.setOutput('Approved');
                 }
 
               })
