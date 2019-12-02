@@ -28,6 +28,29 @@ function get_sandbox_details(url, token,id, callback){
 
 }
 
+function get_sandbox_details_recursive(url, token,id){
+
+     setTimeout(function(){ get_sandbox_details(url, token, id, 
+            function (status){
+              done = false
+              if (status.sandbox_status=='Ended'){
+                 core.setFailed('Blueprint failed policy validation');
+                 done = true
+              }
+
+              if (status.status_details!='' && status.status_details!='Waiting'){
+                 core.setOutput('Approved');
+                 done = true
+              }
+
+              if (done == false){
+                get_sandbox_details_recursive(url,token,id)
+              }
+
+            }); }, 5000);
+
+
+}
 // most @actions toolkit packages have async methods
 async function run() {
   try { 
@@ -65,26 +88,11 @@ async function run() {
       });
 
     });
-    var status = ''
+    
+    get_sandbox_details_recursive(url,token,id)
 
-    done = false
-    while (!done) {
-      console.log('here');
-
-      setTimeout(function(){ get_sandbox_details(url, token, id, 
-              function (status){
-                if (status.sandbox_status=='Ended'){
-                   core.setFailed('Blueprint failed policy validation');
-                   done = true
-                }
-
-                if (status.status_details!='' && status.status_details!='Waiting'){
-                   core.setOutput('Approved');
-                   done = true
-                }
-
-              }); }, 5000);
-    }
+   
+    
   } 
   catch (error) {
     core.setFailed(error.message);
