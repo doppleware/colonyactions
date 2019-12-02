@@ -3,7 +3,7 @@ const wait = require('./wait');
 const github = require('@actions/github');
 const request = require('request');
 
-function get_sandbox_details(url){
+function get_sandbox_details(url, token){
 
    details = ''
     request.get(url+'/sandbox/' + id)
@@ -72,7 +72,7 @@ async function run() {
 
     for (i=0; i<20; i++){
        setTimeout(function() {
-            var status = get_sandbox_details(url) 
+            var status = get_sandbox_details(url, token) 
             console.log(status)
 
         }, 3000);   
