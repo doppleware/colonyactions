@@ -1,9 +1,9 @@
 const core = require('@actions/core');
 const wait = require('./wait');
 const github = require('@actions/github');
-const request = require('request');
 
-function get_sandbox_details(url, token,id){
+async function get_sandbox_details(url, token,id){
+    var request = require('request');
 
     var status = ''
     var details = ''
@@ -20,7 +20,9 @@ function get_sandbox_details(url, token,id){
       })
 
       response.on('end', function(data) {
-        console.log('details: ' + details);
+        console.log('details: ' +  JSON.parse(details));
+        console.log('details: ' +  JSON.parse(details)[0]);
+
 
         // compressed data as it is received
         status = JSON.parse(details)[0].sandbox_status;
@@ -30,12 +32,15 @@ function get_sandbox_details(url, token,id){
       })
 
     });
-    return status;
+
+    
 }
 
 // most @actions toolkit packages have async methods
 async function run() {
   try { 
+    var request = require('request');
+
     const token = core.getInput('colony_token');
     const account = core.getInput('colony_account');
     const space = core.getInput('colony_space');
@@ -73,13 +78,10 @@ async function run() {
     });
     var status = ''
 
-    for (i=0; i<20; i++){
+    for (i=0; i<2; i++){
        setTimeout(function() {
-            var status = get_sandbox_details(url, token, id) 
-            console.log(status)
-            console.log('###########################')
-
-
+            var status = get_sandbox_details(url, token, id); 
+            console.log('###########################' + status);
         }, 5000);   
     }
 
