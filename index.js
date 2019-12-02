@@ -35,10 +35,14 @@ async function run() {
       response.on('data', function(data) {
         // compressed data as it is received
         console.log('received ' + data.length + ' bytes of compressed data')
-        console.log(data)
+        console.log(data.toString())
+        console.log(data.toJSON())
+
       })
 
     });
+
+    core.setFailed('blah');
   } 
   catch (error) {
     core.setFailed(error.message);
