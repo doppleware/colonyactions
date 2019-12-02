@@ -2017,6 +2017,7 @@ async function run() {
     const payload = JSON.stringify(github.context.payload, undefined, 2)
     //console.log(`The event payload: ${payload}`); 
     var url = 'https://' + account + '.cloudshellcolony.com/api/spaces/'+space ;
+    var id = ''
     request.post(url+'/sandbox',{
        json: {
         sandbox_name: 'test',
