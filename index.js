@@ -17,8 +17,6 @@ function get_sandbox_details(url, token,id, callback){
       })
 
       response.on('end', function(data) {
-        console.log('here2');
-
         // compressed data as it is received
         callback(JSON.parse(details)[0])
       })
@@ -30,7 +28,7 @@ function get_sandbox_details(url, token,id, callback){
 
 function get_sandbox_details_recursive(url, token,id){
 
-     setTimeout(function(){ get_sandbox_details(url, token, id, 
+     get_sandbox_details(url, token, id, 
             function (status){
               done = false
               if (status.sandbox_status=='Ended'){
@@ -44,10 +42,12 @@ function get_sandbox_details_recursive(url, token,id){
               }
 
               if (done == false){
-                get_sandbox_details_recursive(url,token,id)
+                setTimeout(function() {
+                  get_sandbox_details_recursive(url,token,id);
+                },1500)
               }
 
-            }); }, 5000);
+            });
 
 
 }
@@ -88,7 +88,7 @@ async function run() {
       });
 
     });
-    
+
     get_sandbox_details_recursive(url,token,id)
 
    
