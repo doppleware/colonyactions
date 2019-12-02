@@ -2015,23 +2015,16 @@ function get_sandbox_details(url, token,id, callback){
     request.get(url+'/sandbox/' + id)
     .auth(null, null, true, token)
     .on('response', function(response) {
-      core.setOutput('result', response.statusCode);
-      console.log(response.statusCode); // 200
           // unmodified http.IncomingMessage object
       response.on('data', function(data) {
         // compressed data as it is received
-        console.log('received ' + data.length + ' bytes of compressed data');
         details += data.toString()
       })
 
       response.on('end', function(data) {
-        console.log('details: ' +  details);
+        console.log('here2');
 
         // compressed data as it is received
-        status = JSON.parse(details)[0].sandbox_status;
-        console.log('status ' + status);
-        status_details = JSON.parse(details)[0].status_details;
-        console.log('status details ' + status_details);
         callback(JSON.parse(details)[0])
       })
 
@@ -2069,12 +2062,9 @@ async function run() {
       })
     .auth(null, null, true, token)
     .on('response', function(response) {
-      core.setOutput('result', response.statusCode);
-      console.log(response.statusCode); // 200
           // unmodified http.IncomingMessage object
       response.on('data', function(data) {
         // compressed data as it is received
-        console.log('received ' + data.length + ' bytes of compressed data');
         id = JSON.parse(data.toString()).id;
 
       });
@@ -2082,20 +2072,23 @@ async function run() {
     });
     var status = ''
 
-    for (i=0; i<5; i++){
-       setTimeout(function() {
-            get_sandbox_details(url, token, id, 
+    done = false
+    while (!done) {
+      console.log('here');
+
+      setTimeout(function(){ get_sandbox_details(url, token, id, 
               function (status){
                 if (status.sandbox_status=='Ended'){
                    core.setFailed('Blueprint failed policy validation');
+                   done = true
                 }
 
                 if (status.status_details!='' && status.status_details!='Waiting'){
                    core.setOutput('Approved');
+                   done = true
                 }
 
-              })
-        }, 5000);   
+              }); }, 5000);
     }
   } 
   catch (error) {
