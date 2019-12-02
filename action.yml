@@ -1,12 +1,20 @@
-name: 'Wait'
-description: 'Wait a designated number of milliseconds'
+name: 'Validate Blueprint'
+description: 'Validate a blueprint change'
 inputs:
-  milliseconds:  # id of input
-    description: 'number of milliseconds to wait'
+  colony_token:  # id of input
+    description: 'token for colony login'
     required: true
-    default: '1000'
+    default: ''
+  colony_account:  # id of input
+    description: 'Colony account to use'
+    required: true
+    default: ''
+  colony_space:  # id of input
+    description: 'Colony space to use'
+    required: true
+    default: ''
 outputs:
-  time: # output will be available to future steps 
+  result: # output will be available to future steps 
     description: 'The message to output'
 runs:
   using: 'node12'
