@@ -11,8 +11,8 @@ async function run() {
     const space = core.getInput('colony_space');
     const payload = JSON.stringify(github.context.payload, undefined, 2)
     //console.log(`The event payload: ${payload}`); 
-    var url = 'https://' + account + '.cloudshellcolony.com/api/spaces/'+space + '/sandbox';
-    request.post(url,{
+    var url = 'https://' + account + '.cloudshellcolony.com/api/spaces/'+space ;
+    request.post(url+'/sandbox',{
        json: {
         sandbox_name: 'test',
         blueprint_name: 'movies-dev-env',
@@ -34,12 +34,27 @@ async function run() {
           // unmodified http.IncomingMessage object
       response.on('data', function(data) {
         // compressed data as it is received
-        console.log('received ' + data.length + ' bytes of compressed data')
-        console.log(data.toString())
-        console.log(data.toJSON())
+        console.log('received ' + data.length + ' bytes of compressed data');
+        id = JSON.parse(data.toString()).id;
 
       })
 
+    });
+
+    request.get(url+'/sandbox/' + id)
+    .auth(null, null, true, token)
+    .on('response', function(response) {
+      core.setOutput('result', response.statusCode);
+      console.log(response.statusCode); // 200
+          // unmodified http.IncomingMessage object
+      response.on('data', function(data) {
+        // compressed data as it is received
+        console.log('received ' + data.length + ' bytes of compressed data');
+        status = JSON.parse(data.toString()).sandbox_status;
+        console.log('status ' + status);
+        status_details = JSON.parse(data.toString()).status_details;
+        console.log('status details ' + status_details);
+      })
     });
 
     core.setFailed('blah');
