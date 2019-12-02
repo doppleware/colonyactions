@@ -23,9 +23,9 @@ function get_sandbox_details(url, token,id){
         console.log('details: ' + details);
 
         // compressed data as it is received
-        status = JSON.parse(details).sandbox_status;
+        status = JSON.parse(details)[0].sandbox_status;
         console.log('status ' + status);
-        status_details = JSON.parse(details.toString()).status_details;
+        status_details = JSON.parse(details)[0].status_details;
         console.log('status details ' + status_details);
       })
 
@@ -77,8 +77,10 @@ async function run() {
        setTimeout(function() {
             var status = get_sandbox_details(url, token, id) 
             console.log(status)
+            console.log('###########################')
 
-        }, 3000);   
+
+        }, 5000);   
     }
 
 
