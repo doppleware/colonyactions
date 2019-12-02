@@ -33,7 +33,7 @@ async function get_sandbox_details(url, token,id){
 
     });
 
-    
+
 }
 
 // most @actions toolkit packages have async methods
@@ -78,10 +78,12 @@ async function run() {
     });
     var status = ''
 
-    for (i=0; i<2; i++){
+    for (i=0; i<5; i++){
        setTimeout(function() {
-            var status = get_sandbox_details(url, token, id); 
-            console.log('###########################' + status);
+            var status = get_sandbox_details(url, token, id)
+            .then(function() {  
+              console.log('###########################' + status)
+            });
         }, 5000);   
     }
 
