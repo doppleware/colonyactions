@@ -5,7 +5,8 @@ const request = require('request');
 
 function get_sandbox_details(url, token,id){
 
-   details = ''
+    var status = ''
+    var details = ''
     request.get(url+'/sandbox/' + id)
     .auth(null, null, true, token)
     .on('response', function(response) {
