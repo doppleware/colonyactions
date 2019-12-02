@@ -2,7 +2,7 @@ const core = require('@actions/core');
 const wait = require('./wait');
 const github = require('@actions/github');
 
-async function get_sandbox_details(url, token,id){
+function get_sandbox_details(url, token,id, callback){
     var request = require('request');
 
     var status = ''
@@ -20,15 +20,14 @@ async function get_sandbox_details(url, token,id){
       })
 
       response.on('end', function(data) {
-        console.log('details: ' +  JSON.parse(details));
-        console.log('details: ' +  JSON.parse(details)[0]);
-
+        console.log('details: ' +  details);
 
         // compressed data as it is received
         status = JSON.parse(details)[0].sandbox_status;
         console.log('status ' + status);
         status_details = JSON.parse(details)[0].status_details;
         console.log('status details ' + status_details);
+        callback(JSON.parse(details)[0])
       })
 
     });
@@ -80,15 +79,16 @@ async function run() {
 
     for (i=0; i<5; i++){
        setTimeout(function() {
-            var status = get_sandbox_details(url, token, id)
-            .then(function() {  
-              console.log('###########################' + status)
-            });
+            get_sandbox_details(url, token, id, 
+              function (status){
+                if (status.sandbox_status=='Ending'){
+                   core.setFailed(error.message);
+
+                }
+
+              })
         }, 5000);   
     }
-
-
-    core.setFailed('blah');
   } 
   catch (error) {
     core.setFailed(error.message);
