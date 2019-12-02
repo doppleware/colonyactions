@@ -42,6 +42,7 @@ async function run() {
 
     });
 
+    details = ''
     request.get(url+'/sandbox/' + id)
     .auth(null, null, true, token)
     .on('response', function(response) {
@@ -51,11 +52,18 @@ async function run() {
       response.on('data', function(data) {
         // compressed data as it is received
         console.log('received ' + data.length + ' bytes of compressed data');
-        status = JSON.parse(data.toString()).sandbox_status;
+        details += data.toString()
+      })
+
+      response.on('end', function(data) {
+        // compressed data as it is received
+        status = JSON.parse(details.toString()).sandbox_status;
         console.log('status ' + status);
-        status_details = JSON.parse(data.toString()).status_details;
+        status_details = JSON.parse(details.toString()).status_details;
         console.log('status details ' + status_details);
       })
+
+
     });
 
     core.setFailed('blah');
