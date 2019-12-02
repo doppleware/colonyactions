@@ -31,8 +31,12 @@ async function run() {
     .on('response', function(response) {
       core.setOutput('result', response.statusCode);
       console.log(response.statusCode); // 200
-      console.log(response); 
-      console.log(response.toJSON());// 'image/png'
+          // unmodified http.IncomingMessage object
+      response.on('data', function(data) {
+        // compressed data as it is received
+        console.log('received ' + data.length + ' bytes of compressed data')
+        console.log(data)
+      })
 
     });
   } 
