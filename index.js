@@ -1,6 +1,7 @@
 const core = require('@actions/core');
 const wait = require('./wait');
 const github = require('@actions/github');
+const request = require('request');
 
 // most @actions toolkit packages have async methods
 async function run() {
@@ -9,13 +10,9 @@ async function run() {
     const account = core.getInput('colony_account');
     const space = core.getInput('colony_space');
     const payload = JSON.stringify(github.context.payload, undefined, 2)
-    console.log(`The event payload: ${payload}`); 
-    end_time = new Date();
-    end_time.setHours(end_time.getHours() + 4);
-    end_time_str = end_time.toISOString();
-    var request = require('request');
-    var url = 'http://' + account + '.cloudshellcolony.com/api/spaces/'+space;
-    request.post(url + '/sandbox',{
+    //console.log(`The event payload: ${payload}`); 
+    var url = 'https://' + account + '.cloudshellcolony.com/api/spaces/'+space + '/sandbox';
+    request.post(url,{
        json: {
         sandbox_name: 'test',
         blueprint_name: 'movies-dev-env',
@@ -35,7 +32,7 @@ async function run() {
       core.setOutput('result', response.statusCode);
       console.log(response.statusCode); // 200
       console.log(response); 
-      console.log(response.text);// 'image/png'
+      console.log(response.toJSON());// 'image/png'
 
     });
   } 
