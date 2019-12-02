@@ -3,6 +3,33 @@ const wait = require('./wait');
 const github = require('@actions/github');
 const request = require('request');
 
+function get_sandbox_details(){
+
+   details = ''
+    request.get(url+'/sandbox/' + id)
+    .auth(null, null, true, token)
+    .on('response', function(response) {
+      core.setOutput('result', response.statusCode);
+      console.log(response.statusCode); // 200
+          // unmodified http.IncomingMessage object
+      response.on('data', function(data) {
+        // compressed data as it is received
+        console.log('received ' + data.length + ' bytes of compressed data');
+        details += data.toString()
+      })
+
+      response.on('end', function(data) {
+        // compressed data as it is received
+        status = JSON.parse(details.toString()).sandbox_status;
+        console.log('status ' + status);
+        status_details = JSON.parse(details.toString()).status_details;
+        console.log('status details ' + status_details);
+      })
+
+    });
+    return status;
+}
+
 // most @actions toolkit packages have async methods
 async function run() {
   try { 
@@ -38,33 +65,18 @@ async function run() {
         console.log('received ' + data.length + ' bytes of compressed data');
         id = JSON.parse(data.toString()).id;
 
-      })
+      });
 
     });
+    var status = ''
 
-    details = ''
-    request.get(url+'/sandbox/' + id)
-    .auth(null, null, true, token)
-    .on('response', function(response) {
-      core.setOutput('result', response.statusCode);
-      console.log(response.statusCode); // 200
-          // unmodified http.IncomingMessage object
-      response.on('data', function(data) {
-        // compressed data as it is received
-        console.log('received ' + data.length + ' bytes of compressed data');
-        details += data.toString()
-      })
+    for (i=0; i<20; i++){
+       setTimeout(function() {
+            var status = get_sandbox_details() 
+        }, 3000);   
+       console.log('status')
+    }
 
-      response.on('end', function(data) {
-        // compressed data as it is received
-        status = JSON.parse(details.toString()).sandbox_status;
-        console.log('status ' + status);
-        status_details = JSON.parse(details.toString()).status_details;
-        console.log('status details ' + status_details);
-      })
-
-
-    });
 
     core.setFailed('blah');
   } 
