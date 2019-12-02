@@ -2025,8 +2025,10 @@ function get_sandbox_details(url, token,id){
       })
 
       response.on('end', function(data) {
+        console.log('details: ' + details);
+
         // compressed data as it is received
-        status = JSON.parse(details.toString()).sandbox_status;
+        status = JSON.parse(details).sandbox_status;
         console.log('status ' + status);
         status_details = JSON.parse(details.toString()).status_details;
         console.log('status details ' + status_details);
